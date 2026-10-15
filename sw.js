@@ -1,6 +1,6 @@
 // Uni Read offline cache: after the first visit, the game works with no internet.
 // Bump VERSION whenever any cached file changes so devices pick up the update.
-const VERSION = "uni-read-v2";
+const VERSION = "uni-read-v3";
 const FILES = ["./", "./index.html", "./apple-touch-icon.png", "./manifest.json", "./privacy.html"];
 
 self.addEventListener("install", (e) => {
