@@ -23,7 +23,7 @@
   color-scheme:light;
 }
 html,body{background:linear-gradient(180deg,var(--sky),var(--sky-2)) fixed;color:var(--ink);min-height:100%}
-body{font-family:var(--display);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:var(--display);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 24px;-webkit-tap-highlight-color:transparent}
 button{font-family:var(--display);-webkit-user-select:none;user-select:none}
 button:focus-visible{outline:3px solid var(--oops);outline-offset:3px}
 .wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
@@ -49,7 +49,7 @@ button:focus-visible{outline:3px solid var(--oops);outline-offset:3px}
 .chip.no{opacity:.3}
 .chip.gold{background:#FFF1C7;box-shadow:inset 0 0 0 3px var(--gold)}
 @media (max-width:400px){.modes button{font-size:.95rem}.pips{gap:4px;padding-inline:8px}.pip{width:14px;height:14px}}
-body.sight .tile,body.sight .slot,body.sight .bigword span,body.sight .flytile{text-transform:lowercase}
+body.sight .tile,body.sight .slot,body.sight .islot,body.sight .bigword span,body.sight .flytile{text-transform:lowercase}
 /* word card */
 .card{background:var(--card);border-radius:22px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;box-shadow:0 4px 0 var(--line)}
 .pic{font-size:3.2rem;line-height:1;width:70px;height:70px;display:grid;place-items:center;background:var(--sky);border-radius:18px;border:0;cursor:pointer;padding:0}
@@ -59,6 +59,15 @@ body.sight .tile,body.sight .slot,body.sight .bigword span,body.sight .flytile{t
 .slot.filled{border:3px solid var(--tile-edge);background:var(--tile);animation:pop .35s ease-out}
 .hear{width:52px;height:52px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.5rem;cursor:pointer;display:grid;place-items:center}
 
+/* word intro */
+.intro-dim{position:fixed;inset:0;z-index:24;background:rgba(51,40,95,.55);cursor:pointer}
+.intro{position:fixed;inset:0;z-index:25;display:grid;place-content:center;justify-items:center;gap:min(5vh,36px);pointer-events:none;--is:min(19vw,13vh,120px)}
+.ipic{width:min(46vw,34vh,300px);aspect-ratio:1;border-radius:18%;background:var(--card);display:grid;place-items:center;font-size:min(32vw,24vh,210px);line-height:1;box-shadow:0 8px 0 var(--line);transform-origin:0 0}
+.islots{display:flex;gap:calc(var(--is)*.14)}
+.islot{width:var(--is);aspect-ratio:.84;box-sizing:border-box;border-radius:calc(var(--is)*.2);border:calc(var(--is)*.06) dashed var(--line);background:var(--card);box-shadow:0 6px 0 var(--line);display:grid;place-items:center;font-weight:800;font-size:calc(var(--is)*.66);color:var(--ink);transform-origin:0 0;transition:color .25s}
+.islot:first-child{border-style:solid;border-color:var(--ink)}
+.intro.sight .islot{border-style:solid;border-color:var(--card)}
+.intro.fading .islot{color:transparent}
 /* board */
 .board{position:relative;width:100%;aspect-ratio:1;max-width:100%;border-radius:22px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;--cell:56px;
   background:repeating-conic-gradient(var(--grass) 0 25%,var(--grass-2) 0 50%) 0 0/calc(200%/7) calc(200%/7);box-shadow:0 6px 0 var(--grass-edge)}
@@ -137,6 +146,27 @@ body.sight .tile,body.sight .slot,body.sight .bigword span,body.sight .flytile{t
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.7}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:400px){.slot{font-size:1.5rem}.pic{width:58px;height:58px;font-size:2.7rem}.card{gap:9px;padding-inline:10px}.hear{width:46px;height:46px}.big{font-size:5.5rem}.gift{font-size:6.5rem}}
+/* Phones and portrait: one screen, no scrolling. Header row, mode switch, word card,
+   board fills the leftover space (sized by its container), d-pad at the bottom. */
+@media not all and (min-width:900px) and (orientation:landscape){
+  html{height:100%;box-sizing:border-box}
+  body{height:100%;box-sizing:border-box;overflow:hidden;padding-block:8px max(10px,env(safe-area-inset-bottom,0px))}
+  .wrap{height:100%;max-width:520px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto minmax(0,1fr) auto;
+    grid-template-areas:"brand pips" "modes modes" "card card" "board board" "pad pad";gap:10px;align-items:center}
+  .brand{grid-area:brand;font-size:1.5rem}
+  .brand img{width:40px;height:40px;border-radius:11px}
+  .bar{display:contents}
+  .pips{grid-area:pips}
+  .modes{grid-area:modes}
+  .card{grid-area:card;padding:10px 12px}
+  .stage{grid-area:board;align-self:stretch;min-height:0;container-type:size;display:grid;place-items:center}
+  .board{width:min(100cqw,100cqh)}
+  .pad{grid-area:pad;grid-template-columns:repeat(3,76px);grid-template-rows:repeat(2,54px)}
+}
+@media not all and (min-width:900px) and (orientation:landscape){
+  @media (min-height:780px){.card{padding:14px}.pic{width:76px;height:76px;font-size:3.4rem}.slot{flex-basis:54px;font-size:2rem}.hear{width:58px;height:58px}.pad{grid-template-columns:repeat(3,92px);grid-template-rows:repeat(2,64px);gap:10px}.pad button{font-size:1.8rem}.modes button{padding-block:9px}.wrap{gap:14px}}
+  @media (max-height:700px){.pad{grid-template-rows:repeat(2,48px);grid-template-columns:repeat(3,70px)}.card{padding-block:8px}.pic{width:54px;height:54px;font-size:2.5rem}.wrap{gap:8px}}
+}
 /* iPad landscape: board fills the height on the left; everything else in a column on the right */
 @media (min-width:900px) and (orientation:landscape){
   html,body{height:100%}
@@ -144,6 +174,7 @@ body.sight .tile,body.sight .slot,body.sight .bigword span,body.sight .flytile{t
   .wrap{--bs:min(calc(100dvh - 128px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)),56vw);max-width:1280px;height:100%;display:grid;grid-template-columns:var(--bs) minmax(0,440px);justify-content:center;grid-template-rows:auto auto auto 1fr;grid-template-areas:"brand pips" "board modes" "board card" "board pad";gap:18px 32px;align-items:start}
   .brand{grid-area:brand;font-size:2rem}
   .brand img{width:56px;height:56px;border-radius:15px}
+  .stage{display:contents}
   .board{grid-area:board;align-self:start;width:var(--bs);align-self:center;border-radius:30px;box-shadow:0 8px 0 var(--grass-edge)}
   .bar{display:contents}
   .pips{grid-area:pips;justify-self:end;align-self:center}
@@ -199,7 +230,7 @@ body.sight .tile,body.sight .slot,body.sight .bigword span,body.sight .flytile{t
     <div class="slots" id="slots" aria-label="Word to spell"></div>
     <button class="hear" id="hear" aria-label="Hear the word">🔊</button>
   </div>
-  <div class="board" id="board" aria-label="Garden board"></div>
+  <div class="stage"><div class="board" id="board" aria-label="Garden board"></div></div>
   <div class="pad" aria-label="Move">
     <button class="up" data-d="0,-1" aria-label="Up">▲</button>
     <button class="left" data-d="-1,0" aria-label="Left">◀</button>
@@ -276,7 +307,7 @@ function newWord(){
   [...word,...extras].forEach((ch,i)=>{const[x,y]=free[i];const p=document.createElement("div");p.className="piece";
     const t=document.createElement("div");t.className="tile";t.textContent=ch;p.appendChild(t);place(p,x,y);board.appendChild(p);tiles.push({x,y,ch,p,t})});
   board.appendChild(buddy);place(buddy,pos.x,pos.y);dress();
-  updateSlots();renderBar();say(word);
+  updateSlots();renderBar();say(word);intro();
 }
 function updateSlots(){
   [...slotsEl.children].forEach((s,i)=>{s.classList.toggle("next",i===got);if(i<got&&!s.textContent){s.textContent=word[i];s.classList.add("filled")}});
@@ -284,6 +315,33 @@ function updateSlots(){
   if(misses>=2)tiles.filter(t=>t.ch===word[got]).forEach(t=>t.t.classList.add("glow"));
 }
 
+
+/* word intro: the picture and blanks appear big in the middle while the word is read,
+   then each piece flies into its place in the word card */
+function intro(){
+  const pic=$("pic"),slots=[...slotsEl.children];
+  if(!pic.getBoundingClientRect().width)return;
+  busy=true;const sight=save.mode==="S",calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const dim=document.createElement("div");dim.className="intro-dim";
+  const box=document.createElement("div");box.className="intro"+(sight?" sight":"");
+  box.innerHTML=(sight?"":`<div class="ipic">${emoji}</div>`)+`<div class="islots">${[...word].map(c=>`<div class="islot">${sight?c:""}</div>`).join("")}</div>`;
+  document.body.append(dim,box);
+  const parts=[...box.querySelectorAll(".ipic,.islot")],targets=(sight?[]:[pic]).concat(slots);
+  targets.forEach(e=>e.style.visibility="hidden");
+  parts.forEach((p,i)=>p.animate([{transform:"scale(.3)",opacity:0},{transform:"none",opacity:1}],{duration:calm?0:380,delay:calm?0:i*70,easing:"cubic-bezier(.3,1.6,.5,1)",fill:"backwards"}));
+  dim.animate([{opacity:0},{opacity:1}],{duration:calm?0:250});
+  let done=false;
+  const shrink=()=>{if(done)return;done=true;clearTimeout(hold);box.classList.add("fading");
+    let left=parts.length;
+    parts.forEach((p,i)=>{const a=p.getBoundingClientRect(),b=targets[i].getBoundingClientRect();
+      const an=p.animate([{transform:"none"},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${b.width/a.width},${b.height/a.height})`}],
+        {duration:calm?0:560,delay:calm?0:i*40,easing:"cubic-bezier(.5,0,.25,1)",fill:"forwards"});
+      an.onfinish=()=>{targets[i].style.visibility="";p.style.visibility="hidden";if(--left===0){box.remove();dim.remove();busy=false}}});
+    dim.animate([{opacity:1},{opacity:0}],{duration:calm?0:560,fill:"forwards"});
+  };
+  const hold=setTimeout(shrink,sight?2300:1900);
+  dim.addEventListener("click",()=>{talked=true;shrink()});
+}
 /* movement */
 function move(dx,dy){
   talked=true;if(busy||!ov.hidden)return;
